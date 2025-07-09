@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="api.css">
+</head>
+<body>
+  <div class="card">
+    <input type="text" id="cityInput" placeholder="Enter city name" />
+    <button onclick="getWeather()">Search</button>
+    
+    <h2 id="location"><i class="fa fa-map-marker"></i>--</h2>
+    <img id="icon" src="" alt="Icon"/>
+    <div id="weather" class="info">--</div>
+    <div id="temp" class="info">--</div>
+    <div id="humidity" class="info">--</div>
+    <div id="wind" class="info">--</div>
+
+    <button onclick="reloadWeather()" class="refresh">
+      <i class="fa fa-refresh"></i>
+    </button>
+  </div>
+
+  <script>
+    const apiKey = "05ca3bacd0fbb51359a371079ec43d20";
+var ss= "brahmapur"
+    function getWeather(cityName) {
+      const city = cityName || document.getElementById("cityInput").value.trim() || "Brahmapur";
+
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error("City not found");
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById("location").textContent = data.name;
+          document.getElementById("weather").textContent = `Weather: ${data.weather[0].description}`;
+          document.getElementById("temp").textContent = `Temperature: ${data.main.temp} °C`;
+          document.getElementById("humidity").textContent = `Humidity: ${data.main.humidity}%`;
+          document.getElementById("wind").textContent = `Wind Speed: ${data.wind.speed} m/s`;
+          document.getElementById("icon").src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+        })
+        .catch(error => {
+          document.getElementById("location").textContent = "Not Found";
+          document.getElementById("weather").textContent = "--";
+          document.getElementById("temp").textContent = "--";
+          document.getElementById("humidity").textContent = "--";
+          document.getElementById("wind").textContent = "--";
+          document.getElementById("icon").src = "";
+          alert("City not found. Please try again.");
+        });
+    }
+
+    // Reload button uses the same function with default city
+    function reloadWeather() {
+      getWeather(ss);
+    }
+
+    // Load Brahmapur weather on page load
+    window.onload = function() {
+      getWeather("Brahmapur");
+    };
+  </script>
+
+</body>
+</html>
